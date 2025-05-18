@@ -1,4 +1,5 @@
 from typing import List, Union
+from graphviz import Digraph
 
 
 class Value:
@@ -7,6 +8,7 @@ class Value:
         self.label = label
         self._op = _op
         self.parents: List[Value] = parents
+        self.grad = 0.0
 
     def __str__(self):
         return f"{self.label if self.label != ""  else"Value"}(data={self.data})"
@@ -55,14 +57,55 @@ class Value:
         return self**other
 
 
-a = Value(1)
-b = Value(2)
-print(2 + a)
-print(2 - a)
-print(a - 2)
-print(a * 2)
-print(a * b)
-print(a**b)
-print(b / a)
-print(a / 2)
-print(2 / a)
+def trace(root: Value):
+    """Trace all nodes and edges starting from the root node."""
+    nodes = set()
+    edges = []
+
+    def build(v: Value):
+        if v not in nodes:
+            nodes.add(v)
+            for parent in v.parents:
+                edges.append((parent, v))
+                build(parent)
+
+    build(root)
+    return nodes, edges
+
+
+def draw_graph(root: Value):
+    """Draw a graph of the calculation to achieve the value"""
+    dot = Digraph(format="png", graph_attr={"rankdir": "LR"})
+    nodes, edges = trace(root)
+
+    for n in nodes:
+        label_text = n.label if n.label else ""
+        value_text = f"{n.data:.4f}"
+        gradient_text = f"{n.grad:.4f}"
+        node_label = f"{{{label_text}|V:{value_text}|G:{gradient_text}}}"
+        dot.node(str(id(n)), label=node_label, shape="record")
+
+        if n._op:
+            op_id = f"{id(n)}_{n._op}"
+            dot.node(op_id, n._op, shape="circle", fixedsize="true", width="0.4")
+            dot.edge(op_id, str(id(n)))
+
+            for parent in n.parents:
+                dot.edge(str(id(parent)), op_id)
+
+    return dot
+
+
+if __name__ == "__main__":
+    # Example usage
+    a = Value(2, label="a")
+    b = Value(3, label="b")
+    c = a + b
+    c.label = "c"
+    d = c * 4
+    d.label = "d"
+    e = d / a
+    e.label = "e"
+
+    dot = draw_graph(e)
+    dot.render("graph", view=True)
