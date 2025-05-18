@@ -5,6 +5,8 @@ from .Value import Value
 
 
 class NonLinear(Enum):
+    """Defines which non-linearity to use"""
+
     ReLU = 1
     LeReLU = 2
 

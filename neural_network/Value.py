@@ -4,6 +4,8 @@ from graphviz import Digraph
 
 
 class Value:
+    """Represents a single scalar value and contains a computation graph"""
+
     def __init__(self, data: int | float, label="", _op="", parents=[], _backprop=lambda: None):
         self.data = data
         self._label = label

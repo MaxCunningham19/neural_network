@@ -1,10 +1,12 @@
 from typing import List
 
-from Neuron import NonLinear
+from .Neuron import NonLinear
 from .Layer import Layer
 
 
 class MLP:
+    """A fully connected MLP"""
+
     def __init__(self, shape: List[int]):
         self.layers = []
         self.shape = shape
@@ -18,6 +20,9 @@ class MLP:
         for layer in self.layers:
             x = layer(x)
         return x
+
+    def forward(self, x):
+        return self.__call__(x)
 
     def params(self):
         return [l.params() for l in self.layers]
