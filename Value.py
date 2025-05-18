@@ -56,6 +56,12 @@ class Value:
     def __rpow__(self, other: Union["Value", int, float]):
         return self**other
 
+    def zero_grad(self):
+        """Set all the grad to zero for this node and recursivly set the gradient to zero for each parent"""
+        self.grad = 0.0
+        for p in self.parents:
+            p.zero_grad()
+
 
 def trace(root: Value):
     """Trace all nodes and edges starting from the root node."""
