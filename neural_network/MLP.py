@@ -1,5 +1,6 @@
 from typing import List
 
+from .Value import Value
 from .Neuron import NonLinear
 from .Layer import Layer
 
@@ -21,7 +22,7 @@ class MLP:
             x = layer(x)
         return x
 
-    def forward(self, x):
+    def forward(self, x) -> List[Value]:
         return self.__call__(x)
 
     def params(self):

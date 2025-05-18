@@ -55,7 +55,6 @@ class Value:
         n = Value(self.data * other.data, _op="*", parents=[self, other])
 
         def _backprop():
-            print(n.grad)
             other.grad += n.grad * self.data
             self.grad += n.grad * other.data
 
@@ -86,12 +85,11 @@ class Value:
         n = Value(self.data**other.data, _op="^", parents=[self, other])
 
         def _backprop():
-            print(n.grad, other.data, self.data)
             self.grad += n.grad * other.data * (self.data ** (other.data - 1))
-            print(self.grad)
-            print(n.grad, self.data, other.data, math.log(self.data))
-            other.grad += n.grad * (self.data**other.data) * math.log(self.data)
-            print(other.grad)
+            if self.data > 0.0:
+                other.grad += n.grad * (self.data**other.data) * math.log(self.data)
+            else:
+                other.grad += 0.0
 
         n._backprop = _backprop
 
@@ -127,7 +125,7 @@ class Value:
             else:
                 return x * a
 
-        n = Value(leaky(self.data, alpha), _op="LeReLU")
+        n = Value(leaky(self.data, alpha), _op="LeReLU", parents=[self])
 
         def _backprop():
             self.grad += n.grad * (1 if self.data >= 0 else alpha)

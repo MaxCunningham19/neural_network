@@ -15,8 +15,8 @@ class Neuron:
     """Implements a simple single Neuron for a neural net"""
 
     def __init__(self, num_inputs: int, nonlinear: Union[NonLinear, None] = None, label=""):
-        self.weights = [Value(random.uniform(-1, 1)) for i in range(num_inputs)]
-        self.bias = Value(random.uniform(-1, 1))
+        self.weights = [Value(random.uniform(-1, 1), label="w") for i in range(num_inputs)]
+        self.bias = Value(random.uniform(-1, 1), label="b")
         self.nonlinear = nonlinear
 
     def __call__(self, x):
