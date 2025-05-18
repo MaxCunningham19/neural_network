@@ -108,6 +108,32 @@ class Value:
 
         return n
 
+    def relu(self):
+        n = Value(max(0.0, self.data), _op="ReLU", parents=[self])
+
+        def _backprop():
+            self.grad += n.grad * (1.0 if self.data > 0.0 else 0.0)
+
+        n._backprop = _backprop
+
+        return n
+
+    def leaky_relu(self, alpha=0.01):
+        def leaky(x, a):
+            if x > 0:
+                return x
+            else:
+                return x * a
+
+        n = Value(leaky(self.data, alpha), _op="LeReLU")
+
+        def _backprop():
+            self.grad += n.grad * (1 if self.data >= 0 else alpha)
+
+        n._backprop = _backprop
+
+        return n
+
     def zero_grad(self):
         """Set all the grad to zero for this node and recursivly set the gradient to zero for each parent"""
         self.grad = 0.0
