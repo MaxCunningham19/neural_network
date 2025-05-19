@@ -70,8 +70,9 @@ class Value:
         n = Value(self.data / other.data, _op="/", parents=[self, other])
 
         def _backprop():
-            self.grad += n.grad * (1 / other.data)
-            other.grad += n.grad * (-self.data / (other.data**2))
+            odata = other.data if other.data != 0.0 else 1e-10
+            self.grad += n.grad * (1 / odata)
+            other.grad += n.grad * (-self.data / (odata**2))
 
         n._backprop = _backprop
 
