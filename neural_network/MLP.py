@@ -9,7 +9,7 @@ class MLP:
     """A fully connected MLP"""
 
     def __init__(self, shape: List[int]):
-        self.layers = []
+        self.layers: List[Layer] = []
         self.shape = shape
         for i, x in enumerate(shape):
             if i < len(shape) - 2:
@@ -25,7 +25,7 @@ class MLP:
     def forward(self, x) -> List[Value]:
         return self.__call__(x)
 
-    def params(self):
+    def params(self) -> List[List[List[Value]]]:
         return [l.params() for l in self.layers]
 
     def __str__(self):

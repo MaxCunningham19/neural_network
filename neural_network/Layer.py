@@ -1,3 +1,5 @@
+from typing import List
+from neural_network.Value import Value
 from .Neuron import Neuron
 
 
@@ -8,5 +10,5 @@ class Layer:
     def __call__(self, x):
         return [n(x) for n in self.neurons]
 
-    def params(self):
+    def params(self) -> List[List[Value]]:
         return [n.params() for n in self.neurons]
